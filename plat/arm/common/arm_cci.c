@@ -9,12 +9,11 @@
 #include <arch.h>
 #include <drivers/arm/cci.h>
 #include <lib/utils.h>
+#include <lib/mmio.h>
 #include <plat/arm/common/plat_arm.h>
 
-static const int cci_map[] = {
-	PLAT_ARM_CCI_CLUSTER0_SL_IFACE_IX,
-	PLAT_ARM_CCI_CLUSTER1_SL_IFACE_IX
-};
+static const int cci_map[] = { PLAT_ARM_CCI_CLUSTER0_SL_IFACE_IX,
+			       PLAT_ARM_CCI_CLUSTER1_SL_IFACE_IX };
 
 /******************************************************************************
  * The following functions are defined as weak to allow a platform to override
@@ -23,7 +22,6 @@ static const int cci_map[] = {
 #pragma weak plat_arm_interconnect_init
 #pragma weak plat_arm_interconnect_enter_coherency
 #pragma weak plat_arm_interconnect_exit_coherency
-
 
 /******************************************************************************
  * Helper function to initialize ARM CCI driver.
@@ -39,6 +37,7 @@ void __init plat_arm_interconnect_init(void)
 void plat_arm_interconnect_enter_coherency(void)
 {
 	cci_enable_snoop_dvm_reqs(MPIDR_AFFLVL1_VAL(read_mpidr_el1()));
+	cci_enable_snoop_dvm_reqs(1); // add FPGA to coherence domain
 }
 
 /******************************************************************************
